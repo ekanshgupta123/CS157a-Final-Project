@@ -92,14 +92,69 @@ app.post('/api/insertApplicant', (req, res) => {
     const resume = req.body.resume
     const experienceID = req.body.experienceId
     const locationID = req.body.locationId
+    const username = req.body.username
     
-    const sqlInsert = "INSERT INTO Applicant (FirstName, LastName, School, GradYear, Resume, ExperienceID, LocationID) VALUES (?, ?, ?, ?, ?, ?, ?);"
-    db.query(sqlInsert, [firstName, lastName, school, gradYear, resume, experienceID, locationID], (err, result) => {
+    const sqlInsert = "INSERT INTO Applicant (FirstName, LastName, School, GradYear, Resume, ExperienceID, LocationID, Username) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+    db.query(sqlInsert, [firstName, lastName, school, gradYear, resume, experienceID, locationID, username], (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).json({ error: 'An error occurred while inserting the Applicant.' });
           } else {
             console.log('Applicant inserted successfully.');
+            res.status(200).json({ success: true , insertId: result.insertId});
+          }  
+    })
+})
+
+app.post('/api/insertRecruiter', (req, res) => {
+
+    const firstName = req.body.firstName
+    const lastName = req.body.lastName
+    const role = req.body.role
+    const locationID = req.body.locationId
+    const username = req.body.username
+
+    const sqlInsert = "INSERT INTO Recruiter (FirstName, LastName, Role, LocationID, Username) VALUES (?, ?, ?, ?, ?);"
+    db.query(sqlInsert, [firstName, lastName, role, locationID, username], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while inserting the Recruiter.' });
+          } else {
+            console.log('Recruiter inserted successfully.');
+            res.status(200).json({ success: true , insertId: result.insertId});
+          }  
+    })
+})
+
+app.post('/api/createApplicant', (req, res) => {
+
+    const username = req.body.username
+    const password = req.body.password
+    
+    const sqlInsert = "INSERT INTO ApplicantAccount (Username, Password) VALUES (?, ?);"
+    db.query(sqlInsert, [username, password], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while inserting the Applicant Account.' });
+          } else {
+            console.log('Applicant Account inserted successfully.');
+            res.status(200).json({ success: true , insertId: result.insertId});
+          }  
+    })
+})
+
+app.post('/api/createRecruiter', (req, res) => {
+
+    const username = req.body.username
+    const password = req.body.password
+    
+    const sqlInsert = "INSERT INTO RecruiterAccount (Username, Password) VALUES (?, ?);"
+    db.query(sqlInsert, [username, password], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while inserting the Recruiter Account.' });
+          } else {
+            console.log('Recruiter Account inserted successfully.');
             res.status(200).json({ success: true , insertId: result.insertId});
           }  
     })
