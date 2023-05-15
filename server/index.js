@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const mysql = require('mysql')
+const mysql = require('mysql2')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 
@@ -53,7 +53,13 @@ app.post('/api/insertLocation', (req, res) => {
     
     const sqlInsert = "INSERT INTO Location (Address, City, State) VALUES (?, ?, ?);"
     db.query(sqlInsert, [address, city, state], (err, result) => {
-        console.log(err)
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while inserting the location.' });
+          } else {
+            console.log('Location inserted successfully.');
+            res.status(200).json({ success: true, insertId: result.insertId });
+          }
     })
 })
 
@@ -67,8 +73,14 @@ app.post('/api/insertCompany', (req, res) => {
     
     const sqlInsert = "INSERT INTO MostRecentExperience (Company, Role, Description, StartDate, EndDate) VALUES (?, ?, ?, ?, ?);"
     db.query(sqlInsert, [company, role, description, startDate, endDate], (err, result) => {
-        console.log("skejdfkn")
-    })
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: 'An error occurred while inserting the company.' });
+        } else {
+          console.log('Company inserted successfully.');
+          res.status(200).json({ success: true, insertId: result.insertId});
+        }
+      });
 })
 
 app.post('/api/insertApplicant', (req, res) => {
@@ -78,12 +90,18 @@ app.post('/api/insertApplicant', (req, res) => {
     const school = req.body.school
     const gradYear = req.body.gradYear
     const resume = req.body.resume
-    const experienceID = req.body.experienceID
-    const locationID = req.body.locationID
+    const experienceID = req.body.experienceId
+    const locationID = req.body.locationId
     
     const sqlInsert = "INSERT INTO Applicant (FirstName, LastName, School, GradYear, Resume, ExperienceID, LocationID) VALUES (?, ?, ?, ?, ?, ?, ?);"
     db.query(sqlInsert, [firstName, lastName, school, gradYear, resume, experienceID, locationID], (err, result) => {
-        console.log(err)
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while inserting the Applicant.' });
+          } else {
+            console.log('Applicant inserted successfully.');
+            res.status(200).json({ success: true , insertId: result.insertId});
+          }  
     })
 })
 
