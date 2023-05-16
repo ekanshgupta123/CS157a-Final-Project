@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CreateApplicant from "./createApplicant";
 import ApplicantInfo from "./applicantInfo";
 import RecruiterInfo from "./recruiterInfo";
+import RecruiterHome from "./recruiterHome";
+import ApplicantHome from "./applicantHome";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -15,6 +17,8 @@ root.render(
         <Route path="createApplicant" element={< CreateApplicant/>} />
         <Route path="applicantInfo" element={< ApplicantInfo />} />
         <Route path="recruiterInfo" element={< RecruiterInfo />} />
+        <Route path="recruiterHome" element={< RecruiterHome />} />
+        <Route path="applicantHome" element={< ApplicantHome />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

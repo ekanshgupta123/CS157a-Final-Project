@@ -10,11 +10,11 @@ const CreateRecruiter = (props) => {
 
     const submitCreateRecruiter = async () => {
         try {
-          const locationResponse = await Axios.post('http://localhost:3001/api/createRecruiter', {
+          const recruiterResponse = await Axios.post('http://localhost:3001/api/createRecruiter', {
             username: usernameRecruiter,
             password: passwordRecruiter,
           });
-    
+
           // Handle the successful insertion
           alert("Successful insert");
           navigate('/recruiterInfo');
@@ -39,7 +39,7 @@ const CreateRecruiter = (props) => {
             setPasswordRecruiter(e.target.value)
         }} />
           </div>
-          <button onClick={submitCreateRecruiter}>Submit Create Recruiter Account </button>
+          <button onClick={submitCreateRecruiter}> Create Recruiter Account </button>
         </div>
       )
 }

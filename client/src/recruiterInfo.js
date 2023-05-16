@@ -1,8 +1,9 @@
 import { useState } from "react";
 import Axios from 'axios'
-
+import { useNavigate } from 'react-router-dom';
 
 const RecruiterInfo = (props) => {
+    const navigate = useNavigate();
     const [username, setUsername] = useState('')
 
     const [address ,setAddress] = useState('')
@@ -12,6 +13,7 @@ const RecruiterInfo = (props) => {
     const [firstName ,setFirstName] = useState('')
     const [lastName ,setLastName] = useState('')
     const [role ,setRole] = useState('')
+
 
     const submitRecruiterInfo = async () => {
         try {
@@ -30,8 +32,12 @@ const RecruiterInfo = (props) => {
             locationId: locationId,
             username: username
           });
+
+          const recruiterID = recruiterResponse.data.insertId;
+          console.log("skdfkf", recruiterID)
           
           // Handle the successful insertion
+          navigate('/recruiterHome', {state: {recruiterID: recruiterID}})
           alert("Successful insert");
         } catch (error) {
           // Handle any errors

@@ -38,10 +38,108 @@ app.get('/api/get/company', (req, res) => {
     })
 })
 
-app.get('/api/get/applicant', (req, res) => {
-    const sqlSelect = "SELECT * FROM Applicant;"
+app.get('/api/get/application', (req, res) => {
+    const sqlSelect = "SELECT Application.ApplicationID, Role.Title, Role.Description, Role.StartDate, Location.Address, Recruiter.FirstName, Recruiter.LastName FROM Application JOIN Role ON Application.RoleID = Role.RoleID JOIN Location ON Role.LocationID = Location.LocationID JOIN Recruiter ON Application.RecruiterID = Recruiter.RecruiterID;"
     db.query(sqlSelect, (err, result) => {
         res.send(result)
+    })
+});
+
+app.get('/api/get/application/:recruiterID', (req, res) => {
+    const recruiterID = req.params.recruiterID; 
+    const sqlSelect = "SELECT Application.*, Role.* FROM Application INNER JOIN Role ON Application.RoleID = Role.RoleID WHERE RecruiterID = ?;"
+    db.query(sqlSelect, [recruiterID], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while retrieving applicants.' });
+          } else {
+            res.status(200).json(result);
+          }
+    });
+})
+
+app.get('/api/get/applicant/:recruiterID', (req, res) => {
+    const recruiterID = req.params.recruiterID;
+    const sqlSelect = "SELECT AP.ApplicantID, AP.FirstName, AP.LastName, AP.School, AP.GradYear FROM Applicant AP JOIN ApplicantApplication AA ON AP.ApplicantID = AA.ApplicantID JOIN Application A ON AA.ApplicationID = A.ApplicationID JOIN Recruiter R ON A.RecruiterID = R.RecruiterID WHERE R.RecruiterID = ?;"
+    db.query(sqlSelect, [recruiterID], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while retrieving applicants.' });
+          } else {
+            res.status(200).json(result);
+          }
+    })
+})
+
+app.get('/api/get/applicantID', (req, res) => {
+    const username = req.query.username;
+    const sqlSelect = "SELECT ApplicantID FROM Applicant WHERE Username = ?";
+    db.query(sqlSelect, [username], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while retrieving the ApplicantID.' });
+          } else {
+            if (result.length > 0) {
+              const applicantID = result[0].ApplicantID;
+              res.status(200).json({ applicantID: applicantID });
+            } else {
+              res.status(404).json({ error: 'Applicant not found.' });
+            }
+          }
+    })
+})
+
+app.post('/api/applicantLogin', async (req, res) => {
+    const { username, password } = req.body;
+    const sqlSelect = 'SELECT * FROM ApplicantAccount WHERE username = ? AND password = ?';
+
+    db.query(sqlSelect, [username, password], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ success: false, message: 'An error occurred during login.' });
+          } else {
+            if (result.length > 0) {
+              res.status(200).json({ success: true, message: 'Login successful.' });
+            } else {
+              res.status(401).json({ success: false, message: 'Invalid username or password.' });
+            }
+          }
+    })
+})
+
+app.post('/api/applicantApplication', async (req, res) => {
+    const applicationID = req.body.applicationID
+    const applicantID = req.body.applicantID
+
+    const sqlInsert = "INSERT INTO ApplicantApplication (ApplicationID, ApplicantID) VALUES (?, ?);"
+    db.query(sqlInsert, [applicationID, applicantID], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while inserting the location.' });
+          } else {
+            console.log('Location inserted successfully.');
+            res.status(200).json({ success: true, insertId: result.insertId });
+          }
+    })
+})
+
+
+app.post('/api/recruiterLogin', async (req, res) => {
+    const { username } = req.body;
+    const sqlSelect = 'SELECT * FROM Recruiter WHERE username = ?';
+
+    db.query(sqlSelect, [username], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ success: false, message: 'An error occurred during login.' });
+          } else {
+            if (result.length > 0) {
+                const recruiterID = result[0].RecruiterID;
+              res.status(200).json({ success: true, recruiterID: recruiterID, message: 'Login successful.' });
+            } else {
+              res.status(401).json({ success: false, message: 'Invalid username or password.' });
+            }
+          }
     })
 })
 
@@ -155,6 +253,42 @@ app.post('/api/createRecruiter', (req, res) => {
             res.status(500).json({ error: 'An error occurred while inserting the Recruiter Account.' });
           } else {
             console.log('Recruiter Account inserted successfully.');
+            res.status(200).json({ success: true , insertId: result.insertId});
+          }  
+    })
+})
+
+app.post('/api/createRole', (req, res) => {
+
+    const title = req.body.title
+    const description = req.body.description
+    const startDate = req.body.startDate
+    const locationId = req.body.locationId
+    
+    const sqlInsert = "INSERT INTO Role (Title, Description, StartDate, LocationID) VALUES (?, ?, ?, ?);"
+    db.query(sqlInsert, [title, description, startDate, locationId], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while inserting the Role.' });
+          } else {
+            console.log('Role inserted successfully.');
+            res.status(200).json({ success: true , insertId: result.insertId});
+          }  
+    })
+})
+
+app.post('/api/createApplication', (req, res) => {
+
+    const roleID = req.body.roleID
+    const recruiterID = req.body.recruiterID
+    
+    const sqlInsert = "INSERT INTO Application (RoleID, RecruiterID) VALUES (?, ?);"
+    db.query(sqlInsert, [roleID, recruiterID], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while inserting the Application.' });
+          } else {
+            console.log('Application inserted successfully.');
             res.status(200).json({ success: true , insertId: result.insertId});
           }  
     })

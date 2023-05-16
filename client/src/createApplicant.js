@@ -40,7 +40,7 @@ const CreateApplicant = (props) => {
                 setPasswordApplicant(e.target.value)
                 }} />
                 <br />
-                <button onClick={submitCreateApplicant}>Submit Create Applicant Account </button>
+                <button onClick={submitCreateApplicant}> Create Applicant Account </button>
             </div>
           </div>
       )

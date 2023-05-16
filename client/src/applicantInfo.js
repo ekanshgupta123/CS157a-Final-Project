@@ -1,8 +1,11 @@
 import { useState } from "react";
 import Axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 
 const ApplicantInfo = (props) => {
+
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState('')
     const [address ,setAddress] = useState('')
@@ -53,7 +56,9 @@ const ApplicantInfo = (props) => {
           });
           
           // Handle the successful insertion
+          navigate('/applicantHome', {state: {username: username}})
           alert("Successful insert");
+
         } catch (error) {
           // Handle any errors
           console.error(error);
